@@ -1,3 +1,444 @@
+# Gold Price Explainer — Architecture & Implementation Summary
+
+## 📋 Project Overview
+
+This is a complete, AI-powered **Gold Price Explainer** system that implements the core capabilities described in the planning document: from data ingestion to interpretable visual outputs.
+
+## 🎯 Key Highlights
+
+### 1. End-to-end layered architecture
+
+**Data Layer (L0)**
+
+* ✅ Market time series: gold price, USD index, 10-year yield, VIX
+* ✅ News stream: automatic RSS feed ingestion (free sources)
+* ✅ Event calendar: predefined key macro events (extensible)
+
+**Understanding Layer (L1–L2)**
+
+* ✅ Structured event extraction (Gemini API)
+* ✅ Mapping into **6 factor domains × sub-factors**
+* ✅ Impact strength estimation (heuristic scoring)
+
+**Alignment Layer (L3)**
+
+* ✅ Event-window analysis
+* ✅ Price–event co-occurrence patterns
+
+**Output Layer (L4)**
+
+* ✅ Daily Market Brief (structured “Today in Gold”)
+* ✅ Impact Factor Curve visualisation (signature feature)
+* ✅ Watchlist
+
+### 2. Six factor domains implemented
+
+The full factor dictionary is implemented in `factor_config.json`:
+
+```
+A) Monetary & Rates
+   - A1_REAL_YIELD: Real yields
+   - A2_POLICY_PATH: Policy path expectations
+   - A3_QE_QT: QE/QT and financial stability
+
+B) Inflation & Growth
+   - B1_INFLATION: Inflation level and surprise
+   - B2_RECESSION_RISK: Recession risk
+
+C) FX & Liquidity
+   - C1_USD_STRENGTH: USD strength
+   - C2_LIQUIDITY: Global liquidity
+
+D) Risk & Geopolitics
+   - D1_GEOPOLITICAL: Geopolitical conflict
+   - D2_SANCTIONS: Sanctions and reserve diversification
+   - D3_POLITICAL_RISK: Political risk
+
+E) Physical Market
+   - E1_CENTRAL_BANK: Central bank gold buying
+   - E2_ETF_FLOWS: ETF flows
+   - E3_JEWELRY: Jewellery demand
+   - E5_SUPPLY: Supply shocks
+
+F) Market Microstructure
+   - F1_POSITIONING: Futures positioning
+   - F2_TERM_STRUCTURE: Term structure
+```
+
+Each factor includes:
+
+* mechanism description
+* proxy variables
+* relevant event types
+* typical lag/horizon
+* typical directional intuition
+
+### 3. Signature feature: Impact Factor Curves
+
+**Implementation approach**
+
+1. Aggregate factor scores daily
+2. Apply a rolling window (7 days) to accumulate signal
+3. Normalise per day (sum of all factors = 1)
+4. Visualise as time series
+
+**User value**
+
+* Makes it easy to see which drivers dominated the gold narrative in each period
+* This is **narrative visualisation**, not forecasting
+* It is a key differentiator from standard “news feed” products
+
+## 📁 File Structure
+
+### Core modules
+
+| File                 | Function                                | Lines |
+| -------------------- | --------------------------------------- | ----: |
+| `gold_analyzer.py`   | Main orchestrator and pipeline runner   |  ~380 |
+| `data_fetcher.py`    | Market data ingestion (yfinance)        |  ~250 |
+| `news_fetcher.py`    | News ingestion (RSS feeds)              |  ~280 |
+| `event_extractor.py` | Event extraction (Gemini API)           |  ~270 |
+| `factor_engine.py`   | Factor analytics engine                 |  ~320 |
+| `factor_config.json` | Factor dictionary (core knowledge base) |  ~300 |
+| `dashboard.html`     | Interactive dashboard                   |  ~650 |
+
+### Config & documentation
+
+| File               | Description          |
+| ------------------ | -------------------- |
+| `README.md`        | Project overview     |
+| `QUICKSTART.md`    | Detailed usage guide |
+| `requirements.txt` | Python dependencies  |
+| `env.example.txt`  | Environment template |
+
+## 🔧 Tech Stack
+
+### Backend
+
+* **Python 3.8+**
+* **AI/ML**: `google-generativeai` (Gemini API)
+* **Data**: `yfinance`, `pandas`, `numpy`
+* **News**: `feedparser`, `requests`
+
+### Frontend
+
+* **Pure HTML/CSS/JavaScript** (no build tooling)
+* **Chart.js** for charts
+* Responsive layout
+
+### Data sources (all free)
+
+* Market data: Yahoo Finance (`yfinance`)
+* News: RSS feeds (Fed, ECB, Reuters, Kitco, IMF, etc.)
+* AI analysis: Gemini API (free quota ~60 requests/day)
+
+## 🚀 Usage Flow
+
+### 1. Install dependencies
+
+```bash
+pip install -r requirements.txt --break-system-packages
+```
+
+### 2. Configure API
+
+```bash
+# Rename env.example.txt to .env
+# Add your Gemini API key
+GEMINI_API_KEY=your_key_here
+```
+
+### 3. Run analysis
+
+```bash
+python gold_analyzer.py
+```
+
+Outputs:
+
+* `data_cache/` - market data cache
+* `news_cache/` - news cache
+* `events_output/` - structured events
+* `analysis_output/` - full analysis results (JSON)
+
+### 4. View dashboard
+
+```bash
+python -m http.server 8000
+# Visit http://localhost:8000/dashboard.html
+# Upload an analysis_output/*.json file
+```
+
+## 💡 Core Algorithms
+
+### Event impact scoring
+
+```python
+event_strength =
+    event_type_importance *
+    strongest_factor_strength *
+    average_confidence *
+    market_volatility_context
+```
+
+### Impact Factor Curves
+
+```python
+1. Daily aggregation: Σ(event_impact × factor_strength)
+2. Rolling window: rolling_sum(7 days)
+3. Normalisation: factor_influence / Σ(all_factors)
+```
+
+### Gemini prompt engineering
+
+A strict JSON schema is used to constrain outputs:
+
+* event type (8 categories)
+* factor tags (code, polarity, strength, confidence)
+* mechanism path (causal chain template)
+* horizon (intraday to 6M)
+
+## 📊 Example Output
+
+### Daily brief structure
+
+```json
+{
+  "title": "Today in Gold",
+  "date": "2024-01-31",
+  "price_snapshot": {
+    "gold_price": 2043.50,
+    "change_pct": 0.45,
+    "dxy": 103.25,
+    "yield": 4.12
+  },
+  "what_happened": [
+    {
+      "headline": "Fed Holds Rates Steady...",
+      "event_type": "CENTRAL_BANK_DECISION",
+      "impact_score": 0.756,
+      "factors": ["A1_REAL_YIELD", "A2_POLICY_PATH"]
+    }
+  ],
+  "why_matters": [
+    {
+      "factor_name": "Real Yields",
+      "influence_score": 0.352,
+      "event_count": 3
+    }
+  ],
+  "watch_next": [...]
+}
+```
+
+## 🎨 Dashboard Design
+
+### Components
+
+1. **Price Snapshot Cards**
+
+   * Gold price + daily change
+   * DXY, yields, VIX
+
+2. **What Happened**
+
+   * Top 5 events
+   * impact score
+   * linked factors
+
+3. **Why It Matters**
+
+   * Top 3 active factors
+   * influence bars (%)
+   * sample supporting events
+
+4. **What to Watch**
+
+   * upcoming macro events
+   * schedule and impact level
+
+5. **Gold Trend Chart**
+
+   * dual axis: gold price + USD index
+   * interactive hover
+
+6. **Impact Factor Curves** (core)
+
+   * multiple time series
+   * stacked area view
+   * normalised influence
+
+### UI characteristics
+
+* 💎 **Golden theme** for brand consistency
+* 📱 **Responsive** layout
+* 🎯 **Interactive** charts via Chart.js
+* 📊 **Data-driven** loading from JSON
+
+## ⚙️ Configuration & Extension
+
+### Adjust analysis parameters
+
+In `gold_analyzer.py`:
+
+```python
+results = analyzer.run_full_analysis(
+    days_back=30,    # lookback window (7–90)
+    max_news=50      # max news items to process (controls cost)
+)
+```
+
+### Customise factors
+
+Edit `factor_config.json`:
+
+```json
+{
+  "factor_domains": {
+    "G_ENVIRONMENT": {
+      "name": "Environment & Climate",
+      "factors": {
+        "G1_CLIMATE_SHOCK": {
+          "name": "Climate Impact on Mining",
+          "mechanism": "...",
+          ...
+        }
+      }
+    }
+  }
+}
+```
+
+### Add news sources
+
+In `news_fetcher.py`:
+
+```python
+RSS_FEEDS = [
+    "https://your-custom-feed.com/rss",
+    ...
+]
+```
+
+## 🔐 Cost Control
+
+### Gemini API usage
+
+* **Free quota**: ~60 requests/day
+* **Typical usage**: ~30–50 requests per full run
+* **Suggested frequency**: once per day
+
+### Reduce cost
+
+```python
+# Method 1: reduce news volume
+max_news=20  # reduce from 50 to 20
+
+# Method 2: run less frequently
+# e.g., daily rather than hourly
+
+# Method 3: caching
+# news and events are cached by default
+```
+
+## ⚠️ Important Disclaimer
+
+### This is a research/interpretation tool, not a trading signal
+
+* ✅ Understand market narratives
+* ✅ Learn factor-driven analysis
+* ✅ Study historical patterns
+* ❌ Not for live trading execution
+* ❌ Not investment advice
+* ❌ No guarantee of predictive accuracy
+
+### MVP boundaries
+
+The current implementation focuses on:
+
+* free data sources
+* the core 6-domain factor framework
+* baseline visualisation
+* local file-based storage
+
+**Not included (but extensible):**
+
+* paid data feeds
+* real-time push notifications
+* database persistence
+* ML prediction models
+* mobile app
+
+## 🔮 Future Roadmap
+
+### Short term (1–2 weeks)
+
+1. Add more RSS sources
+2. Improve Gemini prompts
+3. Enhance dashboard interactions
+4. Add export (PDF/CSV)
+
+### Mid term (1–2 months)
+
+1. Integrate an economic calendar API
+2. Track ETF holdings
+3. Add historical “backtest-like” evaluation
+4. SQLite persistence
+
+### Long term (3–6 months)
+
+1. Learn factor weights via ML
+2. Multi-asset support (silver, oil)
+3. Mobile UI
+4. Real-time alerting system
+
+## 🛠️ Troubleshooting
+
+### Common issues
+
+**Q: No news fetched?**
+A: Check your network; RSS sources may be temporarily unavailable.
+
+**Q: Gemini API error?**
+A: Verify your API key and quota.
+
+**Q: Charts not showing?**
+A: Ensure you uploaded the correct JSON output file.
+
+**Q: Empty price data?**
+A: `yfinance` may be rate-limited—try again later.
+
+## 📚 References
+
+### API docs
+
+* Gemini API: [https://ai.google.dev/docs](https://ai.google.dev/docs)
+* yfinance: [https://pypi.org/project/yfinance/](https://pypi.org/project/yfinance/)
+* Chart.js: [https://www.chartjs.org/](https://www.chartjs.org/)
+
+### Finance references
+
+* World Gold Council: [https://www.gold.org/](https://www.gold.org/)
+* Federal Reserve: [https://www.federalreserve.gov/](https://www.federalreserve.gov/)
+* IMF: [https://www.imf.org/](https://www.imf.org/)
+
+## 🙏 Acknowledgements
+
+Built with:
+
+* Google Gemini
+* Yahoo Finance data
+* Open-source community tooling
+
+---
+
+**Version**: 1.0 MVP
+**Date**: 2024-02-09
+**License**: MIT
+
+Enjoy! 🚀
+
+
 # Gold Price Explainer - 项目架构与实现总结
 
 ## 📋 项目概述
