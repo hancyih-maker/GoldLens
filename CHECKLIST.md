@@ -1,3 +1,476 @@
+# 📦 Gold Price Explainer — Project File Inventory
+
+## ✅ Core File List
+
+### 🐍 Python Modules (7)
+
+1. **gold_analyzer.py** (11 KB)
+
+   * Main entry point
+   * Orchestrates all modules
+   * Generates the daily market brief
+   * Run: `python gold_analyzer.py`
+
+2. **data_fetcher.py** (8.0 KB)
+
+   * Market data ingestion
+   * Supports: gold, USD, yields, VIX
+   * Data source: Yahoo Finance (free)
+   * Test: `python data_fetcher.py`
+
+3. **news_fetcher.py** (9.1 KB)
+
+   * News ingestion
+   * RSS feeds (7 sources)
+   * Optional: NewsAPI integration
+   * Test: `python news_fetcher.py`
+
+4. **event_extractor.py** (8.4 KB)
+
+   * Structured event extraction
+   * Powered by Gemini API
+   * JSON schema constraints
+   * Test: `python event_extractor.py`
+
+5. **factor_engine.py** (11 KB)
+
+   * Factor analytics engine
+   * Scoring, aggregation, alignment
+   * Computes impact curves
+   * Test: `python factor_engine.py`
+
+6. **requirements.txt** (356 B)
+
+   * Python dependency list
+   * All free libraries
+   * Install: `pip install -r requirements.txt --break-system-packages`
+
+### 📊 Config Files (2)
+
+7. **factor_config.json** (8.6 KB)
+
+   * **Core knowledge base**
+   * Defines 6 factor domains
+   * Event type mappings
+   * Mechanism descriptions
+   * ⚠️ Important: fully customisable and extensible
+
+8. **env.example.txt** (580 B)
+
+   * Environment variable template
+   * Rename to `.env`
+   * Add Gemini API key
+   * Optional: NewsAPI, Alpha Vantage keys
+
+### 🎨 Frontend UI (1)
+
+9. **dashboard.html** (20 KB)
+
+   * Interactive visual dashboard
+   * Fully standalone (no build step)
+   * Chart.js charts
+   * Usage: `python -m http.server 8000`
+
+### 📚 Documentation (3)
+
+10. **README.md** (2.9 KB)
+
+    * Project overview
+    * Feature list
+    * System architecture diagram
+
+11. **QUICKSTART.md** (7.4 KB)
+
+    * Detailed setup guide
+    * Installation steps
+    * Troubleshooting
+    * Cost control
+
+12. **PROJECT_SUMMARY.md** (new)
+
+    * Architecture summary
+    * Technical details
+    * Extension roadmap
+
+---
+
+## 🚀 Quick Start Checklist
+
+### [ ] Step 1: Environment setup
+
+* [ ] Install Python 3.8+
+* [ ] Download all project files
+* [ ] Install dependencies: `pip install -r requirements.txt --break-system-packages`
+* [ ] Verify install: `python -c "import google.generativeai; print('OK')"`
+
+### [ ] Step 2: Configure API
+
+* [ ] Get a Gemini API key: [https://makersuite.google.com/app/apikey](https://makersuite.google.com/app/apikey)
+* [ ] Copy `env.example.txt` to `.env`
+* [ ] Add your key: `GEMINI_API_KEY=your_key_here`
+* [ ] Verify:
+
+  * [ ] `python -c "import os; from dotenv import load_dotenv; load_dotenv(); print(os.getenv('GEMINI_API_KEY')[:10])"`
+
+### [ ] Step 3: Test modules
+
+* [ ] Test market data: `python data_fetcher.py`
+
+  * Expected: ✓ Fetched XX days of gold price data
+
+* [ ] Test news ingestion: `python news_fetcher.py`
+
+  * Expected: ✓ Total fetched: XX relevant articles
+
+* [ ] Test event extraction: `python event_extractor.py`
+
+  * Expected: ✓ Event type: CENTRAL_BANK_DECISION
+
+### [ ] Step 4: Run full analysis
+
+* [ ] Run: `python gold_analyzer.py`
+* [ ] Wait for completion (~2–5 minutes depending on news volume)
+* [ ] Check output folders:
+
+  * [ ] `data_cache/` - market data JSON exists
+  * [ ] `news_cache/` - news JSON exists
+  * [ ] `events_output/` - event JSON exists
+  * [ ] `analysis_output/` - analysis JSON exists
+
+### [ ] Step 5: View dashboard
+
+* [ ] Start web server: `python -m http.server 8000`
+* [ ] Open: [http://localhost:8000/dashboard.html](http://localhost:8000/dashboard.html)
+* [ ] Upload the latest JSON file from `analysis_output/`
+* [ ] Verify all sections render:
+
+  * [ ] Price Snapshot
+  * [ ] What Happened
+  * [ ] Why It Matters
+  * [ ] What to Watch
+  * [ ] Gold trend chart
+  * [ ] Impact Factor Curves
+
+---
+
+## 📂 Post-run Directory Structure
+
+```
+gold-price-explainer/
+├── README.md
+├── QUICKSTART.md
+├── PROJECT_SUMMARY.md
+├── requirements.txt
+├── .env                          # created by you (from env.example.txt)
+├── factor_config.json
+├── gold_analyzer.py
+├── data_fetcher.py
+├── news_fetcher.py
+├── event_extractor.py
+├── factor_engine.py
+├── dashboard.html
+│
+├── data_cache/                   # auto-created
+│   └── market_data_20240209.json
+│
+├── news_cache/                   # auto-created
+│   └── news_20240209_1430.json
+│
+├── events_output/                # auto-created
+│   └── events_20240209_1435.json
+│
+└── analysis_output/              # auto-created
+    └── analysis_20240209_1440.json
+```
+
+---
+
+## 🎯 Core Functionality Validation
+
+### ✓ Data layer validation
+
+```bash
+# Run data fetch test
+python data_fetcher.py
+
+# Expected:
+# ✓ Fetched 30 days of gold price data
+# ✓ Fetched 30 days of USD index data
+# ✓ Fetched 30 days of yield data
+# ✓ Fetched 30 days of VIX data
+# ✓ Aligned data: 30 rows
+```
+
+### ✓ News layer validation
+
+```bash
+# Run news ingestion test
+python news_fetcher.py
+
+# Expected:
+# ✓ Federal Reserve: X articles
+# ✓ Reuters: X articles
+# ✓ Kitco: X articles
+# ✓ Total unique articles: XX
+```
+
+### ✓ AI layer validation
+
+```bash
+# Run event extraction test (requires GEMINI_API_KEY)
+python event_extractor.py
+
+# Expected:
+# [1/2] Fed Holds Rates Steady...
+#   ✓ Event type: CENTRAL_BANK_DECISION
+#   ✓ Factors: A1_REAL_YIELD, A2_POLICY_PATH
+```
+
+### ✓ Analytics layer validation
+
+```bash
+# Run full analysis
+python gold_analyzer.py
+
+# Expected full flow:
+# 📊 STEP 1: Fetching Market Data
+# 📰 STEP 2: Fetching News
+# 🤖 STEP 3: Extracting Events
+# 📈 STEP 4: Factor Analysis
+# 📝 STEP 5: Generating Daily Brief
+# ✓ Full analysis saved to analysis_output/...
+```
+
+---
+
+## 🔍 Quick Diagnostics (Common Issues)
+
+### Issue 1: ImportError
+
+**Symptom**: `ModuleNotFoundError: No module named 'xxx'`
+
+**Diagnosis**:
+
+```bash
+pip list | grep -i google
+pip list | grep -i yfinance
+pip list | grep -i pandas
+```
+
+**Fix**:
+
+```bash
+pip install -r requirements.txt --break-system-packages
+```
+
+---
+
+### Issue 2: API key error
+
+**Symptom**: `Error: Invalid API key` or `403 Forbidden`
+
+**Diagnosis**:
+
+```bash
+# Check .env exists
+ls -la .env
+
+# Check contents
+cat .env | grep GEMINI
+
+# Quick key sanity check
+python -c "
+from dotenv import load_dotenv
+import os
+load_dotenv()
+key = os.getenv('GEMINI_API_KEY')
+print(f'Key length: {len(key) if key else 0}')
+print(f'Starts with: {key[:10] if key else None}')
+"
+```
+
+**Fix**:
+
+1. Confirm `.env` exists (not `env.example.txt`)
+2. Ensure the key is copied correctly (no extra spaces/newlines)
+3. Regenerate a key: [https://makersuite.google.com/app/apikey](https://makersuite.google.com/app/apikey)
+
+---
+
+### Issue 3: No news fetched
+
+**Symptom**: `✓ Total fetched: 0 relevant articles`
+
+**Diagnosis**:
+
+```bash
+# Test connectivity to a feed
+curl -I https://www.federalreserve.gov/feeds/press_all.xml
+
+# Check proxy settings
+echo $HTTP_PROXY
+echo $HTTPS_PROXY
+```
+
+**Fix**:
+
+1. Check your connection
+2. Try again later (feeds can be temporarily down)
+3. If you have a NewsAPI key, add it to `.env`
+
+---
+
+### Issue 4: Gemini quota exceeded
+
+**Symptom**: `Resource exhausted` or `Quota exceeded`
+
+**Diagnosis**:
+Check quota at [https://makersuite.google.com/](https://makersuite.google.com/)
+
+**Fix**:
+
+1. Wait for quota reset (typically ~24 hours)
+2. Reduce `max_news`:
+
+```python
+# In gold_analyzer.py
+results = analyzer.run_full_analysis(
+    days_back=30,
+    max_news=10
+)
+```
+
+---
+
+### Issue 5: Blank dashboard
+
+**Symptom**: Page loads but shows no data
+
+**Diagnosis**:
+
+1. Open browser console (F12)
+2. Confirm you uploaded the correct JSON file
+3. Inspect the JSON content
+
+**Fix**:
+
+```bash
+# Check outputs exist
+ls -lh analysis_output/
+
+# Validate JSON structure
+python -c "
+import json
+with open('analysis_output/analysis_XXXXX.json') as f:
+    data = json.load(f)
+    print('Keys:', list(data.keys()))
+    print('Brief keys:', list(data['daily_brief'].keys()))
+"
+```
+
+---
+
+## 💰 Cost Estimate
+
+### Gemini API (main cost)
+
+| Scenario                   | Requests | Free quota | Cost |
+| -------------------------- | -------: | ---------: | ---- |
+| Single run (30 news items) |      ~30 |     60/day | $0   |
+| 1 run per day              |      ~30 |          ✓ | $0   |
+| 2 runs per day             |      ~60 |          ✓ | $0   |
+| 3 runs per day             |      ~90 |    30 over | paid |
+
+**Recommendation**: one full run per day is sufficient.
+
+### Other services (all free)
+
+* Yahoo Finance: free
+* RSS feeds: free
+* Chart.js: free (CDN)
+* Storage: local filesystem
+
+**Total**: free for normal usage ✅
+
+---
+
+## 📊 Performance Notes
+
+### Runtime (typical)
+
+* Data fetch: ~10s
+* News fetch: ~15s
+* Event extraction (30 items): ~60–90s (API dependent)
+* Factor analytics: ~2s
+* **Total**: ~2–3 minutes
+
+### Data volume
+
+* Market data: ~30 KB / 30 days
+* News cache: ~200 KB / 50 items
+* Event output: ~100 KB / 50 items
+* Analysis output: ~500 KB (includes all data)
+
+---
+
+## ✨ Next Actions
+
+### Get started (5 minutes)
+
+1. [ ] Install dependencies
+2. [ ] Configure API key
+3. [ ] Run the first analysis
+4. [ ] Open the dashboard
+
+### Go deeper (30 minutes)
+
+1. [ ] Read `QUICKSTART.md`
+2. [ ] Inspect `factor_config.json`
+3. [ ] Understand the impact curves
+4. [ ] Try adjusting parameters
+
+### Customise (1–2 hours)
+
+1. [ ] Add new factors
+2. [ ] Add more RSS sources
+3. [ ] Improve Gemini prompts
+4. [ ] Enhance the dashboard UI
+
+---
+
+## 📞 Getting Help
+
+### Docs
+
+* `README.md` - overview
+* `QUICKSTART.md` - setup and usage
+* `PROJECT_SUMMARY.md` - architecture
+
+### Online resources
+
+* Gemini API: [https://ai.google.dev/docs](https://ai.google.dev/docs)
+* yfinance: [https://pypi.org/project/yfinance/](https://pypi.org/project/yfinance/)
+* python-dotenv: [https://pypi.org/project/python-dotenv/](https://pypi.org/project/python-dotenv/)
+
+### Debug tips
+
+1. Test modules individually
+2. Inspect cached JSON files
+3. Add `print()` statements
+4. Validate JSON structure
+5. Use the browser console (F12)
+
+---
+
+**Final reminder:**
+
+⚠️ This is an interpretation tool, not a trading signal.
+⚠️ MVP version—features can be extended.
+⚠️ Watch your API quota to avoid overuse.
+
+Enjoy! 🚀
+
+
 # 📦 Gold Price Explainer - 项目文件清单
 
 ## ✅ 核心文件列表
