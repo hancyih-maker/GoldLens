@@ -1,0 +1,23 @@
+# Gold Price Explainer - Python Dependencies
+
+# Core
+python-dotenv>=1.0.0
+requests>=2.31.0
+pandas>=2.0.0
+numpy>=1.24.0
+
+# AI/ML
+google-generativeai>=0.3.0
+
+# Data Fetching
+yfinance>=0.2.0
+feedparser>=6.0.0
+beautifulsoup4>=4.12.0
+
+# Utils
+python-dateutil>=2.8.0
+pytz>=2023.3
+
+# Optional: For advanced features
+# alpha-vantage>=2.3.0
+# newsapi-python>=0.2.7

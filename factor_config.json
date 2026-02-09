@@ -1,0 +1,214 @@
+{
+  "factor_domains": {
+    "A_MONETARY_RATES": {
+      "name": "Monetary & Rates",
+      "description": "货币政策与利率",
+      "factors": {
+        "A1_REAL_YIELD": {
+          "name": "Real Yields",
+          "mechanism": "实际利率↑ → 持有无息资产黄金的机会成本↑ → 金价通常承压",
+          "proxies": ["10Y TIPS real yield", "Nominal yield - Inflation expectations"],
+          "events": ["FOMC", "Fed Speech", "Interest Rate Decision", "Dot Plot"],
+          "lag_days": [0, 3],
+          "typical_direction": "negative"
+        },
+        "A2_POLICY_PATH": {
+          "name": "Policy Path Expectations",
+          "mechanism": "降息预期↑ → 未来实际利率预期↓ → 利好黄金",
+          "proxies": ["Fed Funds Futures", "Rate Cut Expectations"],
+          "events": ["CPI Surprise", "Employment Data", "Financial Stability Risk"],
+          "lag_days": [0, 5],
+          "typical_direction": "positive"
+        },
+        "A3_QE_QT": {
+          "name": "QE/QT & Financial Stability",
+          "mechanism": "流动性宽松（QE/救市）→ 通胀/货币贬值叙事增强 → 利好黄金",
+          "proxies": ["Fed Balance Sheet", "Credit Spreads"],
+          "events": ["QE Announcement", "Bank Stress", "Bailout"],
+          "lag_days": [0, 7],
+          "typical_direction": "positive"
+        }
+      }
+    },
+    "B_INFLATION_GROWTH": {
+      "name": "Inflation & Growth",
+      "description": "通胀与增长预期",
+      "factors": {
+        "B1_INFLATION": {
+          "name": "Inflation Level & Surprise",
+          "mechanism": "通胀↑ → 通胀对冲需求↑（但需看央行反应）",
+          "proxies": ["CPI/PCE Surprise", "Breakeven Inflation"],
+          "events": ["CPI Release", "PCE Release", "Energy Shock"],
+          "lag_days": [0, 2],
+          "typical_direction": "conditional"
+        },
+        "B2_RECESSION_RISK": {
+          "name": "Recession Risk",
+          "mechanism": "衰退风险↑ → risk-off → 避险资产需求↑",
+          "proxies": ["PMI", "Yield Curve", "Unemployment Rate"],
+          "events": ["GDP Release", "PMI Data", "Jobs Report"],
+          "lag_days": [0, 5],
+          "typical_direction": "positive"
+        }
+      }
+    },
+    "C_FX_LIQUIDITY": {
+      "name": "FX & Liquidity",
+      "description": "美元与全球流动性",
+      "factors": {
+        "C1_USD_STRENGTH": {
+          "name": "USD Strength",
+          "mechanism": "美元↑ → 以美元计价的黄金对非美买家更贵 → 金价常承压",
+          "proxies": ["DXY", "EUR/USD", "USD/JPY"],
+          "events": ["US Data Beat", "Safe Haven Flow"],
+          "lag_days": [0, 1],
+          "typical_direction": "negative"
+        },
+        "C2_LIQUIDITY": {
+          "name": "Global Liquidity & Funding Stress",
+          "mechanism": "资金紧张 → 短期卖出换现金，但中期避险叙事支撑",
+          "proxies": ["VIX", "Credit Spreads", "TED Spread"],
+          "events": ["Credit Event", "Liquidity Crisis"],
+          "lag_days": [0, 3],
+          "typical_direction": "conditional"
+        }
+      }
+    },
+    "D_RISK_GEOPOLITICS": {
+      "name": "Risk & Geopolitics",
+      "description": "风险偏好与地缘政治",
+      "factors": {
+        "D1_GEOPOLITICAL": {
+          "name": "Geopolitical Conflict",
+          "mechanism": "不确定性↑ → 避险需求↑ → 利好黄金",
+          "proxies": ["Conflict Intensity Index", "News Heat"],
+          "events": ["War Escalation", "Sanctions", "Shipping Disruption"],
+          "lag_days": [0, 7],
+          "typical_direction": "positive"
+        },
+        "D2_SANCTIONS": {
+          "name": "Sanctions & Reserve Diversification",
+          "mechanism": "制裁风险↑ → 降低美元资产、增加黄金储备",
+          "proxies": ["Central Bank Gold Purchase", "Reserve Policy"],
+          "events": ["Financial Sanctions", "Asset Freeze", "SWIFT Restriction"],
+          "lag_days": [7, 180],
+          "typical_direction": "positive"
+        },
+        "D3_POLITICAL_RISK": {
+          "name": "Political Risk & Elections",
+          "mechanism": "政策不确定性↑ → 避险与通胀预期变化",
+          "proxies": ["Policy Uncertainty Index", "Treasury Volatility"],
+          "events": ["Elections", "Fiscal Standoff", "Government Shutdown"],
+          "lag_days": [0, 30],
+          "typical_direction": "positive"
+        }
+      }
+    },
+    "E_PHYSICAL_MARKET": {
+      "name": "Physical Market",
+      "description": "实物供需",
+      "factors": {
+        "E1_CENTRAL_BANK": {
+          "name": "Central Bank Demand",
+          "mechanism": "结构性买盘，偏中长期利好",
+          "proxies": ["WGC Data", "IMF Reports", "National Announcements"],
+          "events": ["CB Gold Purchase", "Reserve Policy Change"],
+          "lag_days": [30, 180],
+          "typical_direction": "positive"
+        },
+        "E2_ETF_FLOWS": {
+          "name": "Investment Demand (ETF Flows)",
+          "mechanism": "ETF净流入↑ → 对价格短期/中期支撑更直接",
+          "proxies": ["GLD Holdings", "IAU Holdings", "Total ETF Flows"],
+          "events": ["Large Inflows/Outflows", "Institutional Shift"],
+          "lag_days": [0, 5],
+          "typical_direction": "positive"
+        },
+        "E3_JEWELRY": {
+          "name": "Jewelry Demand",
+          "mechanism": "节日/婚季影响实物需求",
+          "proxies": ["Import Data", "Festival Season", "Local Gold Premium"],
+          "events": ["Diwali", "Chinese New Year", "Tariff Change"],
+          "lag_days": [0, 30],
+          "typical_direction": "positive"
+        },
+        "E5_SUPPLY": {
+          "name": "Mining & Supply",
+          "mechanism": "供给冲击：矿区罢工、环保监管、能源成本扰动",
+          "proxies": ["Mining Output", "Strike News", "Energy Costs"],
+          "events": ["Mine Disruption", "Strike", "Environmental Policy"],
+          "lag_days": [7, 90],
+          "typical_direction": "positive"
+        }
+      }
+    },
+    "F_MARKET_MICRO": {
+      "name": "Market Microstructure",
+      "description": "市场微观与持仓",
+      "factors": {
+        "F1_POSITIONING": {
+          "name": "Futures Positioning (COT)",
+          "mechanism": "过度拥挤 → 脆弱；反转风险升高",
+          "proxies": ["CFTC COT", "Managed Money Net Position"],
+          "events": ["Position Extreme", "Margin Adjustment"],
+          "lag_days": [0, 7],
+          "typical_direction": "conditional"
+        },
+        "F2_TERM_STRUCTURE": {
+          "name": "Term Structure & Inventory",
+          "mechanism": "现货紧张/交割压力影响短期价格",
+          "proxies": ["COMEX Inventory", "Contango/Backwardation"],
+          "events": ["Delivery Anomaly", "Inventory Spike"],
+          "lag_days": [0, 3],
+          "typical_direction": "positive"
+        }
+      }
+    }
+  },
+  "event_types": {
+    "MACRO_DATA_RELEASE": {
+      "examples": ["CPI", "PCE", "GDP", "PMI", "Jobs Report"],
+      "default_importance": 0.8
+    },
+    "CENTRAL_BANK_SPEECH": {
+      "examples": ["Fed Speech", "ECB Speech", "Powell Testimony"],
+      "default_importance": 0.7
+    },
+    "CENTRAL_BANK_DECISION": {
+      "examples": ["FOMC Decision", "Rate Decision", "QE Announcement"],
+      "default_importance": 0.9
+    },
+    "GEOPOLITICAL_ESCALATION": {
+      "examples": ["War", "Conflict", "Military Action", "Tension"],
+      "default_importance": 0.6
+    },
+    "SANCTIONS": {
+      "examples": ["Financial Sanctions", "Trade Restrictions", "Asset Freeze"],
+      "default_importance": 0.5
+    },
+    "ETF_FLOW": {
+      "examples": ["Large ETF Inflow", "ETF Outflow", "Holdings Change"],
+      "default_importance": 0.4
+    },
+    "MINING_DISRUPTION": {
+      "examples": ["Mine Strike", "Production Cut", "Mine Closure"],
+      "default_importance": 0.3
+    },
+    "POLICY_ANNOUNCEMENT": {
+      "examples": ["Fiscal Policy", "Regulation", "Government Policy"],
+      "default_importance": 0.5
+    }
+  },
+  "actors": {
+    "central_banks": ["Fed", "ECB", "BOJ", "BOE", "PBoC", "RBI"],
+    "governments": ["US Treasury", "China", "Russia", "India"],
+    "organizations": ["IMF", "World Bank", "WGC", "OPEC"],
+    "regions": ["Middle East", "Ukraine", "Taiwan", "South China Sea"]
+  },
+  "sentiment_keywords": {
+    "hawkish": ["hawkish", "tighten", "hike", "restrictive", "combat inflation"],
+    "dovish": ["dovish", "ease", "cut", "accommodative", "support growth"],
+    "risk_off": ["risk-off", "safe haven", "flight to safety", "uncertainty", "volatility"],
+    "risk_on": ["risk-on", "risk appetite", "optimism", "rally", "confidence"]
+  }
+}
