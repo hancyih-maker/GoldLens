@@ -1,5 +1,334 @@
 # 🏆 Gold Price Explainer - Quick Start Guide
 
+## Overview
+
+This is an AI-powered **Gold Price Explainer** system that can:
+
+* Automatically fetch market data (gold price, USD index, yields, etc.)
+* Collect and analyse financial news
+* Use the **Gemini API** to extract **structured market events**
+* Map events into **six factor domains** (monetary policy, inflation, USD, geopolitics, physical market, microstructure)
+* Generate a daily market brief (**Today in Gold**)
+* Visualise **impact factor curves**
+
+## Installation
+
+### 1. Install Python dependencies
+
+```bash
+pip install -r requirements.txt --break-system-packages
+```
+
+Main dependencies:
+
+* `google-generativeai` - Gemini API
+* `yfinance` - free market data
+* `feedparser` - RSS news ingestion
+* `pandas`, `numpy` - data processing
+
+### 2. Configure API Keys
+
+Create a `.env` file (copy from the template):
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and add your API keys:
+
+```env
+GEMINI_API_KEY=your_actual_gemini_key
+# Other keys are optional
+```
+
+**Get a Gemini API Key:**
+
+1. Visit [https://makersuite.google.com/app/apikey](https://makersuite.google.com/app/apikey)
+2. Sign in with your Google account
+3. Create an API key
+4. Paste it into your `.env` file
+
+## Running the System
+
+### Option 1: Full analysis (recommended)
+
+```bash
+python gold_analyzer.py
+```
+
+This will:
+
+1. Fetch the last 30 days of market data
+2. Collect relevant news (via RSS feeds)
+3. Use Gemini to extract events (up to 30 items by default to control cost)
+4. Analyse factor influence
+5. Generate the daily brief
+6. Save outputs to `analysis_output/`
+
+**Expected output:**
+
+```
+📊 STEP 1: Fetching Market Data
+✓ Fetched 30 days of gold price data
+✓ Fetched 30 days of USD index data
+...
+
+📰 STEP 2: Fetching News
+✓ Total fetched: 45 relevant articles
+
+🤖 STEP 3: Extracting Events (using Gemini API)
+[1/30] Fed Holds Rates Steady...
+  ✓ Event type: CENTRAL_BANK_DECISION
+  ✓ Factors: A1_REAL_YIELD, A2_POLICY_PATH
+...
+
+📝 STEP 5: Generating Daily Brief
+...
+```
+
+### Option 2: Test modules individually
+
+```bash
+# Test market data fetching
+python data_fetcher.py
+
+# Test news fetching
+python news_fetcher.py
+
+# Test event extraction (requires news data first)
+python event_extractor.py
+```
+
+## Viewing Visualisations
+
+### 1. Open the Dashboard
+
+```bash
+# Start a local server
+python -m http.server 8000
+```
+
+### 2. Visit in your browser
+
+```
+http://localhost:8000/dashboard.html
+```
+
+### 3. Load analysis results
+
+1. Click **"Load Analysis Results"**
+2. Select the latest JSON file under `analysis_output/`
+3. Explore:
+
+   * Price snapshot (Gold, USD, Yield, VIX)
+   * What Happened (top 5 events)
+   * Why It Matters (top 3 active factors)
+   * What to Watch Next (upcoming macro events)
+   * Gold vs USD trend charts
+   * **Impact Factor Curves** (core feature)
+
+## Core Features Explained
+
+### 1. Impact Factor Curves
+
+This is the signature feature. It shows:
+
+* **X-axis**: time
+* **Y-axis**: normalised factor influence (0–1)
+* **Meaning**: which factors are most dominant in explaining the gold narrative over time
+
+**Example interpretations:**
+
+* If **A1_REAL_YIELD** (real yields) rises → rate-related drivers have become more influential recently
+* If **D1_GEOPOLITICAL** spikes → geopolitical events have become the dominant narrative
+
+**This is not a prediction tool — it is narrative visualisation.**
+
+### 2. Daily Brief Structure
+
+```
+Today in Gold - 2024-01-31
+
+💰 PRICE SNAPSHOT
+   Gold: $2043.50 (+0.45%)
+   USD Index: 103.25
+   10Y Yield: 4.12%
+
+📰 WHAT HAPPENED (Top 3)
+   1. Fed Holds Rates Steady...
+   2. Middle East Tensions Rise...
+   3. ETF Inflows Continue...
+
+🎯 WHY IT MAY MATTER
+   • Real Yields
+     Influence: 35.2% | Events: 3
+   • Geopolitical Conflict
+     Influence: 28.7% | Events: 2
+
+👀 WHAT TO WATCH NEXT
+   • US CPI (Monthly, ~13th)
+   • FOMC Meeting (~8 times per year)
+```
+
+### 3. The Six Factor Domains
+
+All extracted events are mapped into these factor domains:
+
+**A) Monetary & Rates**
+
+* A1_REAL_YIELD: real yields
+* A2_POLICY_PATH: policy path expectations
+* A3_QE_QT: QE/QT and financial stability
+
+**B) Inflation & Growth**
+
+* B1_INFLATION: inflation level and surprise
+* B2_RECESSION_RISK: recession risk
+
+**C) FX & Liquidity**
+
+* C1_USD_STRENGTH: USD strength
+* C2_LIQUIDITY: global liquidity
+
+**D) Risk & Geopolitics**
+
+* D1_GEOPOLITICAL: geopolitical conflict
+* D2_SANCTIONS: sanctions and reserve diversification
+* D3_POLITICAL_RISK: political risk
+
+**E) Physical Market**
+
+* E1_CENTRAL_BANK: central bank gold buying
+* E2_ETF_FLOWS: ETF flows
+* E3_JEWELRY: jewellery demand
+* E5_SUPPLY: supply shocks
+
+**F) Market Microstructure**
+
+* F1_POSITIONING: futures positioning
+* F2_TERM_STRUCTURE: term structure
+
+## Cost Control
+
+### Gemini API Usage
+
+* **Free quota**: ~60 requests per day
+* **Typical usage**: ~30–50 requests per full run (processing 30–50 news items)
+* **Recommendations**:
+
+  * Run a full analysis once per day
+  * Reduce processing volume by lowering `max_news`
+
+```python
+# Adjust in gold_analyzer.py
+results = analyzer.run_full_analysis(
+    days_back=30,    # lookback window
+    max_news=20      # reduce to 20 to cut API calls
+)
+```
+
+## Troubleshooting
+
+### Issue 1: No news fetched
+
+**Cause**: RSS feeds may be temporarily unavailable
+**Fix**:
+
+* Check your internet connection
+* Retry after a few minutes
+* Or provide a NewsAPI key
+
+### Issue 2: Gemini API error
+
+**Cause**: invalid API key or quota exceeded
+**Fix**:
+
+* Verify the key in `.env`
+* Check quota at [https://makersuite.google.com/](https://makersuite.google.com/)
+* Reduce the `max_news` parameter
+
+### Issue 3: Empty chart
+
+**Cause**: results not loaded correctly
+**Fix**:
+
+* Ensure you ran `python gold_analyzer.py`
+* Confirm `analysis_output/` contains JSON outputs
+* Upload the correct file in the dashboard
+
+## Next Improvements
+
+This is an MVP. Possible extensions include:
+
+1. **Data Layer**
+
+   * Integrate paid data sources (Bloomberg, Refinitiv)
+   * Add real-time ETF holdings tracking
+   * Use an economic calendar API
+
+2. **Understanding Layer**
+
+   * Fine-tune or calibrate extraction for higher accuracy
+   * Add sentiment analysis
+   * Support multilingual news
+
+3. **Alignment Layer**
+
+   * More advanced causal inference methods
+   * ML-based forecasting (carefully!)
+   * Better event-window optimisation
+
+4. **Output Layer**
+
+   * Auto-generate reports (PDF/PPT)
+   * Email / Slack delivery
+   * Mobile app
+
+5. **Storage**
+
+   * Migrate from JSON to SQLite/PostgreSQL
+   * Add historical data management
+   * Implement incremental updates
+
+## Project Structure
+
+```
+gold-price-explainer/
+├── README.md                    # project overview
+├── QUICKSTART.md               # this file
+├── requirements.txt            # Python dependencies
+├── .env.example                # environment template
+├── factor_config.json          # factor dictionary (core)
+├── gold_analyzer.py            # main entry point
+├── data_fetcher.py             # market data fetcher
+├── news_fetcher.py             # news ingestion
+├── event_extractor.py          # event extraction (Gemini)
+├── factor_engine.py            # factor analytics
+├── dashboard.html              # visual UI
+├── data_cache/                 # market data cache
+├── news_cache/                 # news cache
+├── events_output/              # extracted events
+└── analysis_output/            # analysis results
+```
+
+## Contact & Feedback
+
+This is an open-source project template. You’re welcome to:
+
+* Open Issues to report bugs
+* Submit PRs to contribute
+* Fork the project and customise it
+
+**Important reminder:**
+⚠️ This system is a **research and interpretation tool**, not a trading signal.
+⚠️ All analysis is based on historical patterns and heuristic scoring, not investment advice.
+⚠️ Please use alongside professional financial guidance.
+
+Enjoy! 🚀
+
+
+# 🏆 Gold Price Explainer - Quick Start Guide
+
 ## 简介
 
 这是一个基于 AI 的黄金价格解释器系统，能够：
